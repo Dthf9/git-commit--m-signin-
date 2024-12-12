@@ -1,0 +1,82 @@
+import tkinter as tk
+from tkinter import messagebox
+import sqlite3
+
+# Функция для создания базы данных и таблицы пользователей
+def init_db():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Функция для регистрации пользователя
+def register_user(username, password):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
+        conn.commit()
+        messagebox.showinfo("Успех", "Пользователь зарегистрирован!")
+    except sqlite3.IntegrityError:
+        messagebox.showerror("Ошибка", "Пользователь с таким именем уже существует.")
+    finally:
+        conn.close()
+
+# Функция для авторизации пользователя
+def login_user(username, password):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM users WHERE username=? AND password=?', (username, password))
+    user = cursor.fetchone()
+    conn.close()
+    if user:
+        messagebox.showinfo("Успех", "Авторизация прошла успешно!")
+    else:
+        messagebox.showerror("Ошибка", "Неверный логин или пароль.")
+
+# Функция для открытия окна регистрации
+def open_register_window():
+    register_window = tk.Toplevel()
+    register_window.title("Регистрация")
+
+    tk.Label(register_window, text="Логин").pack()
+    username_entry = tk.Entry(register_window)
+    username_entry.pack()
+
+    tk.Label(register_window, text="Пароль").pack()
+    password_entry = tk.Entry(register_window, show='*')
+    password_entry.pack()
+
+    tk.Button(register_window, text="Зарегистрироваться",
+              command=lambda: register_user(username_entry.get(), password_entry.get())).pack()
+
+# Основное окно приложения
+def main_window():
+    window = tk.Tk()
+    window.title("Авторизация")
+
+    tk.Label(window, text="Логин").pack()
+    username_entry = tk.Entry(window)
+    username_entry.pack()
+
+    tk.Label(window, text="Пароль").pack()
+    password_entry = tk.Entry(window, show='*')
+    password_entry.pack()
+
+    tk.Button(window, text="Авторизоваться",
+              command=lambda: login_user(username_entry.get(), password_entry.get())).pack()
+    tk.Button(window, text="Регистрация", command=open_register_window).pack()
+
+    window.mainloop()
+
+# Инициализация базы данных и запуск приложения
+if __name__ == "__main__":
+    init_db()
+    main_window()
