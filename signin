@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import sqlite3
 
-# Функция для создания базы данных и таблицы пользователей
+#Функция для создания базы данных и таблицы пользователей#
 def init_db():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -16,7 +16,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Функция для регистрации пользователя
+#Функция для регистрации пользователя#
 def register_user(username, password):
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -29,7 +29,7 @@ def register_user(username, password):
     finally:
         conn.close()
 
-# Функция для авторизации пользователя
+#Функция для авторизации пользователя#
 def login_user(username, password):
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -41,7 +41,7 @@ def login_user(username, password):
     else:
         messagebox.showerror("Ошибка", "Неверный логин или пароль.")
 
-# Функция для открытия окна регистрации
+#Функция для открытия окна регистрации#
 def open_register_window():
     register_window = tk.Toplevel()
     register_window.title("Регистрация")
@@ -57,7 +57,7 @@ def open_register_window():
     tk.Button(register_window, text="Зарегистрироваться",
               command=lambda: register_user(username_entry.get(), password_entry.get())).pack()
 
-# Основное окно приложения
+#Основное окно приложения#
 def main_window():
     window = tk.Tk()
     window.title("Авторизация")
@@ -76,7 +76,7 @@ def main_window():
 
     window.mainloop()
 
-# Инициализация базы данных и запуск приложения
+#Инициализация базы данных и запуск приложения#
 if __name__ == "__main__":
     init_db()
     main_window()
